@@ -91,7 +91,7 @@ void SerialPort::Configure()
 	tty.c_oflag &= ~OPOST ;
 
 	tty.c_cc [VMIN]  =   0 ;
-	tty.c_cc [VTIME] = 10 ;	// Ten seconds (100 deciseconds)
+	tty.c_cc [VTIME] = 10 ;	// One second (10 deciseconds)
 
 	tcsetattr (_fileDescriptor, TCSANOW | TCSAFLUSH, &tty) ;
 
@@ -110,7 +110,7 @@ void SerialPort::ReadChar()
 	int n;
 
 	n = read(_fileDescriptor, &_receivedChar, 1);
-
+	cout << (int)_receivedChar << endl;
 	if(n == 0)
 	{
 		_receivedChar = NULL;
@@ -125,17 +125,23 @@ void SerialPort::ReadChar()
 void SerialPort::ReadString()
 {
 	bool readOneChar = true;
-
+	int attempts = 0;
 	_receivedMessage.clear();
 
 	while (readOneChar) {
 		ReadChar();
-		if (_receivedChar != NULL) {
-			_receivedMessage.push_back(_receivedChar);
+		if (_receivedChar == '\0'){
+			attempts++;
+			if(attempts == 5)
+			{
+				readOneChar = false;
+			}
 		}
-		if (_receivedChar == '\n' || _receivedChar == '\r') {
+		if (_receivedChar == '\n' || _receivedChar == '\r' || _receivedChar == '>')
+		{
 			readOneChar = false;
 		}
+		_receivedMessage.push_back(_receivedChar);
 	}
 }
 

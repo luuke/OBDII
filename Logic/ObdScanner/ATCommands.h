@@ -16,5 +16,6 @@
 #define LINEFEEDS_ON	"ATL1"
 #define READ_VOLTAGE	"ATRV"
 #define RESET_ALL		"ATZ"
+#define PRINT_ID		"AI"
 
 #endif /* ATCOMMANDS_H_ */

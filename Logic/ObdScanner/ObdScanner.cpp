@@ -12,48 +12,114 @@
 
 using namespace ObdScannerHandler;
 
-void ObdScanner::SendMessage(string message)
+ObdScanner::ObdScanner()
 {
-	_serialPort.Write(message + '\r');
+	_isReady = false;
+	_isResponseForLastCommand = false;
+	_lastCommandType = AT;
+	_serialPort.Open();
+	_serialPort.Configure();
 }
 
-void ObdScanner::Restart()
+ObdScanner::~ObdScanner()
 {
-	SendMessage(RESET_ALL);
+	_serialPort.Close();
 }
 
-void ObdScanner::TurnOffEcho()
+void ObdScanner::PrintDeviceId()
 {
-	SendMessage(ECHO_OFF);
+	GetData(PRINT_ID);
 }
 
-void ObdScanner::TurnOnEcho()
+void ObdScanner::GetData(string command)
 {
-	SendMessage(ECHO_ON);
+	SendATCommand(command);
+	ReadResponse();
+	ParseResponse();
 }
 
-void ObdScanner::TurnOffHeaders()
+void ObdScanner::SendCommand(string command)
 {
-	SendMessage(HEADERS_OFF);
+	_lastCommand = command;
+	_serialPort.Write(command + '\r');
 }
 
-void ObdScanner::TurnOnHeaders()
+void ObdScanner::SendATCommand(string command)
 {
-	SendMessage(HEADERS_ON);
+	_lastCommandType = AT;
+	SendCommand(command);
 }
 
-void ObdScanner::TurnOffLinefeeds()
+void ObdScanner::SendOBDCommand(string command)
 {
-	SendMessage(LINEFEEDS_OFF);
+	_lastCommandType = OBD;
+	SendCommand(command);
 }
 
-void ObdScanner::TurnOnLinefeeds()
+void ObdScanner::ReadResponse()
 {
-	SendMessage(LINEFEEDS_ON);
+	bool continueReading = true;
+	string singleMessage;
+
+	_commandResponse.clear();
+	while(continueReading)
+	{
+		singleMessage = _serialPort.Read();
+		_commandResponse += singleMessage;
+		cout << singleMessage << endl;
+		if(singleMessage.find_first_of('>') != string::npos)
+		{
+			_isReady = true;
+			continueReading = false;
+		}
+	}
+
+	cout << "Command response: " << _commandResponse << endl;
 }
 
-void ObdScanner::ReadVoltage()
+void ObdScanner::ParseResponse()
 {
-	SendMessage(READ_VOLTAGE);
+	_isResponseForLastCommand = _commandResponse.find(_lastCommand) != string::npos ? true : false;
+//	if(_commandResponse.find('?') != string::npos)
+//	{
+//		throw ("OBD scanner returned > ? <");
+//	}
+
+	if(_isResponseForLastCommand)
+	{
+		switch(_lastCommandType)
+		{
+		case AT:
+			ParseATCommandResponse();
+			break;
+		case OBD:
+			ParseOBDCommandResponse();
+			break;
+		default:
+			throw ("Case not implemented");
+		}
+	}
+	_isReady = _commandResponse.find('>') != string::npos ? true : false;
 }
+
+void ObdScanner::ParseATCommandResponse()
+{
+	string tmp;
+
+	tmp = _commandResponse.substr((_commandResponse.find('\n')+1),string::npos);
+	tmp = tmp.substr(0, tmp.find('\r'));
+
+	_responseData = tmp;
+
+	cout << "Data: " << _responseData << endl;
+}
+
+void ObdScanner::ParseOBDCommandResponse()
+{
+	string expectedResponseForLastCommand = _lastCommand;
+	expectedResponseForLastCommand[0] = '4';
+
+	throw ("Not implemented");
+}
+
 #endif /* OBDSCANNER_CPP_ */

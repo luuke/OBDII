@@ -7,26 +7,19 @@
 
 #include <iostream>
 #include <string>
-#include "SerialPort/SerialPort.h"
+#include "ObdScanner/ObdScanner.h"
 
 using namespace std;
-using namespace SerialPortHandler;
+using namespace ObdScannerHandler;
 
 //TODO: Add 'set sysroot' in .gdbinit
 //TODO: Why 'Cannot access memory at address 0x0' ?
 
 int main()
 {
-	SerialPort serial("/dev/ttyUSB0");
-	serial.Open();
-	serial.Configure();
-	serial.Write("ATI\r");
-	cout << serial.Read() << endl;
-	serial.Write("AT@1\r");
-	cout << serial.Read() << endl;
-	serial.Write("ATRV\r");
-	cout << serial.Read() << endl;
-	serial.Close();
+	ObdScanner _scanner;
+	_scanner.PrintDeviceId();
+
 
 	return 0;
 }
