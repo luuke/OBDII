@@ -51,8 +51,6 @@ namespace ObdScannerHandler
 		CommandType _lastCommandType;
 		string _lastCommand;
 
-		//vector<string> _splittedResponse;
-
 		void GetData(string command);
 		void SendATCommand(string command);
 		void SendOBDCommand(string command);
