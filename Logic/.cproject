@@ -46,7 +46,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="SerialPort/wiringSerial.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="WebService/soapServerLib.cpp|WebService/soapClientLib.cpp|WebService/soapClient.cpp|WebService/WebService.cpp|WebService/gsoap-2.8|SerialPort/wiringSerial.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -96,7 +96,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="SerialPort/wiringSerial.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="WebService/soapServerLib.cpp|WebService/soapClientLib.cpp|WebService/soapClient.cpp|WebService/WebService.cpp|WebService/gsoap-2.8|SerialPort/wiringSerial.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
