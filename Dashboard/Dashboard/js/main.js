@@ -13,8 +13,8 @@ function GetOBDReadings() {
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" \
 	xmlns:OBD="http://tempuri.org/OBD.xsd"> \
 	<SOAP-ENV:Body> \
-	<OBD:GetSpeed> \
-	</OBD:GetSpeed> \
+	<OBD:GetReadings> \
+	</OBD:GetReadings> \
 	</SOAP-ENV:Body> \
 	</SOAP-ENV:Envelope>';
     
@@ -58,8 +58,8 @@ function RandomData() {
 
 function HandleReceivedReadings(data, status, req) {
     var speed = $(req.responseXML).find("speed");
-    var revolution = $(req.responseXML).find("speed");
-    //var revolution = $(req.responseXML).find("revolution");
+    //var revolution = $(req.responseXML).find("speed");
+    var revolution = $(req.responseXML).find("revolution");
 
 	var element = document.getElementById("speed-value");
     element.innerHTML = speed[0].innerHTML;
@@ -73,11 +73,11 @@ function HandleReceivedReadings(data, status, req) {
     element = document.getElementById("revolution-value");
     element.innerHTML = revolution[0].innerHTML;
     point = Highcharts.charts[2].series[0].points[0];
-    point.update(parseInt(revolution[0].innerHTML)*10);
+    point.update(parseInt(revolution[0].innerHTML));
     point = Highcharts.charts[2].series[0].points[1];
-    point.update(5000 - revolution[0].innerHTML*10);
+    point.update(5000 - revolution[0].innerHTML);
     shift = Highcharts.charts[3].series[0].data.length > 20;
-    Highcharts.charts[3].series[0].addPoint(revolution[0].innerHTML*10, true, shift);
+    Highcharts.charts[3].series[0].addPoint(parseInt(revolution[0].innerHTML), true, shift);
 }
 
 function LoadHighcharts() {
