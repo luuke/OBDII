@@ -130,4 +130,5 @@
 			<resource resourceType="PROJECT" workspacePath="/Logic"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

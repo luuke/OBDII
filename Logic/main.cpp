@@ -10,7 +10,6 @@
 #include "ObdScanner/ObdScanner.h"
 //#include "WebService/WebService.h"
 
-//#include "WebService/soapH.h"
 #include "WebService/OBD.nsmap"
 
 using namespace std;
@@ -24,7 +23,7 @@ int main()
 {
 	int master, slave;
 	struct soap *soap = soap_new();
-	master = soap_bind(soap, "192.168.0.4", 2014, 100);
+	master = soap_bind(soap, "192.168.1.3", 2014, 100);
 	if(master < 0)
 	{
 		soap_print_fault(soap, stderr);
@@ -56,7 +55,10 @@ int main()
 
 int OBD__GetSpeed(struct soap* soap, int& speed)
 {
-	speed = 69;
-	cout << "GetSpeed OK" << endl;
+	static int i = 0;
+	speed = i;
+	i += 10;
+	if (i > 200) i = 0;
+	cout << "Speed served" << endl;
 	return SOAP_OK;
 }
