@@ -82,10 +82,39 @@ SOAP_FMAC3 int * SOAP_FMAC4 soap_get_int(struct soap*, int *, const char*, const
 #endif
 
 
+#ifndef SOAP_TYPE_OBD__Readings
+#define SOAP_TYPE_OBD__Readings (7)
+#endif
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_OBD__Readings(struct soap*, const char*, int, const OBD__Readings *, const char*);
+SOAP_FMAC3 OBD__Readings * SOAP_FMAC4 soap_in_OBD__Readings(struct soap*, const char*, OBD__Readings *, const char*);
+
+#ifndef soap_write_OBD__Readings
+#define soap_write_OBD__Readings(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || ((data)->soap_serialize(soap),0) || (data)->soap_put(soap, "OBD:Readings", NULL) || soap_end_send(soap), (soap)->error )
+#endif
+
+SOAP_FMAC3 OBD__Readings * SOAP_FMAC4 soap_get_OBD__Readings(struct soap*, OBD__Readings *, const char*, const char*);
+
+#ifndef soap_read_OBD__Readings
+#define soap_read_OBD__Readings(soap, data) ( soap_begin_recv(soap) || !soap_get_OBD__Readings(soap, data, NULL, NULL) || soap_end_recv(soap), (soap)->error )
+#endif
+
+SOAP_FMAC1 OBD__Readings * SOAP_FMAC2 soap_instantiate_OBD__Readings(struct soap*, int, const char*, const char*, size_t*);
+
+inline OBD__Readings * soap_new_OBD__Readings(struct soap *soap, int n = -1) { return soap_instantiate_OBD__Readings(soap, n, NULL, NULL, NULL); }
+
+inline OBD__Readings * soap_new_req_OBD__Readings(struct soap *soap, int speed, int revolution, int voltage) { OBD__Readings *_p = soap_instantiate_OBD__Readings(soap, -1, NULL, NULL, NULL); if (_p) { _p->soap_default(soap); _p->OBD__Readings::speed = speed; _p->OBD__Readings::revolution = revolution; _p->OBD__Readings::voltage = voltage; } return _p; }
+
+inline OBD__Readings * soap_new_set_OBD__Readings(struct soap *soap, int speed, int revolution, int voltage) { OBD__Readings *_p = soap_instantiate_OBD__Readings(soap, -1, NULL, NULL, NULL); if (_p) { _p->soap_default(soap); _p->OBD__Readings::speed = speed; _p->OBD__Readings::revolution = revolution; _p->OBD__Readings::voltage = voltage; } return _p; }
+
+inline void soap_delete_OBD__Readings(struct soap *soap, OBD__Readings *p) { soap_delete(soap, p); }
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_OBD__Readings(struct soap*, int, int, void*, size_t, const void*, size_t);
+
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Fault
-#define SOAP_TYPE_SOAP_ENV__Fault (18)
+#define SOAP_TYPE_SOAP_ENV__Fault (22)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_SOAP_ENV__Fault(struct soap*, struct SOAP_ENV__Fault *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_SOAP_ENV__Fault(struct soap*, const struct SOAP_ENV__Fault *);
@@ -121,7 +150,7 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Fault(struct soap*, int, int, voi
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Reason
-#define SOAP_TYPE_SOAP_ENV__Reason (17)
+#define SOAP_TYPE_SOAP_ENV__Reason (21)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_SOAP_ENV__Reason(struct soap*, struct SOAP_ENV__Reason *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_SOAP_ENV__Reason(struct soap*, const struct SOAP_ENV__Reason *);
@@ -157,7 +186,7 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Reason(struct soap*, int, int, vo
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Detail
-#define SOAP_TYPE_SOAP_ENV__Detail (14)
+#define SOAP_TYPE_SOAP_ENV__Detail (18)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_SOAP_ENV__Detail(struct soap*, struct SOAP_ENV__Detail *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_SOAP_ENV__Detail(struct soap*, const struct SOAP_ENV__Detail *);
@@ -193,7 +222,7 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Detail(struct soap*, int, int, vo
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Code
-#define SOAP_TYPE_SOAP_ENV__Code (12)
+#define SOAP_TYPE_SOAP_ENV__Code (16)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_SOAP_ENV__Code(struct soap*, struct SOAP_ENV__Code *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_SOAP_ENV__Code(struct soap*, const struct SOAP_ENV__Code *);
@@ -229,7 +258,7 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Code(struct soap*, int, int, void
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Header
-#define SOAP_TYPE_SOAP_ENV__Header (11)
+#define SOAP_TYPE_SOAP_ENV__Header (15)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_SOAP_ENV__Header(struct soap*, struct SOAP_ENV__Header *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_SOAP_ENV__Header(struct soap*, const struct SOAP_ENV__Header *);
@@ -262,8 +291,40 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Header(struct soap*, int, int, vo
 
 #endif
 
+#ifndef SOAP_TYPE_OBD__GetReadings
+#define SOAP_TYPE_OBD__GetReadings (14)
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_OBD__GetReadings(struct soap*, struct OBD__GetReadings *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_OBD__GetReadings(struct soap*, const struct OBD__GetReadings *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_OBD__GetReadings(struct soap*, const char*, int, const struct OBD__GetReadings *, const char*);
+SOAP_FMAC3 struct OBD__GetReadings * SOAP_FMAC4 soap_in_OBD__GetReadings(struct soap*, const char*, struct OBD__GetReadings *, const char*);
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_OBD__GetReadings(struct soap*, const struct OBD__GetReadings *, const char*, const char*);
+
+#ifndef soap_write_OBD__GetReadings
+#define soap_write_OBD__GetReadings(soap, data) ( soap_free_temp(soap), soap_begin_send(soap) || (soap_serialize_OBD__GetReadings(soap, data),0) || soap_put_OBD__GetReadings(soap, data, "OBD:GetReadings", NULL) || soap_end_send(soap), (soap)->error )
+#endif
+
+SOAP_FMAC3 struct OBD__GetReadings * SOAP_FMAC4 soap_get_OBD__GetReadings(struct soap*, struct OBD__GetReadings *, const char*, const char*);
+
+#ifndef soap_read_OBD__GetReadings
+#define soap_read_OBD__GetReadings(soap, data) ( soap_begin_recv(soap) || !soap_get_OBD__GetReadings(soap, data, NULL, NULL) || soap_end_recv(soap), (soap)->error )
+#endif
+
+SOAP_FMAC1 struct OBD__GetReadings * SOAP_FMAC2 soap_instantiate_OBD__GetReadings(struct soap*, int, const char*, const char*, size_t*);
+
+inline struct OBD__GetReadings * soap_new_OBD__GetReadings(struct soap *soap, int n = -1) { return soap_instantiate_OBD__GetReadings(soap, n, NULL, NULL, NULL); }
+
+inline struct OBD__GetReadings * soap_new_req_OBD__GetReadings(struct soap *soap) { struct OBD__GetReadings *_p = soap_instantiate_OBD__GetReadings(soap, -1, NULL, NULL, NULL); if (_p) { soap_default_OBD__GetReadings(soap, _p); } return _p; }
+
+inline struct OBD__GetReadings * soap_new_set_OBD__GetReadings(struct soap *soap) { struct OBD__GetReadings *_p = soap_instantiate_OBD__GetReadings(soap, -1, NULL, NULL, NULL); if (_p) { soap_default_OBD__GetReadings(soap, _p); } return _p; }
+
+inline void soap_delete_OBD__GetReadings(struct soap *soap, struct OBD__GetReadings *p) { soap_delete(soap, p); }
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_OBD__GetReadings(struct soap*, int, int, void*, size_t, const void*, size_t);
+
 #ifndef SOAP_TYPE_OBD__GetSpeed
-#define SOAP_TYPE_OBD__GetSpeed (10)
+#define SOAP_TYPE_OBD__GetSpeed (11)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_OBD__GetSpeed(struct soap*, struct OBD__GetSpeed *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_OBD__GetSpeed(struct soap*, const struct OBD__GetSpeed *);
@@ -295,7 +356,7 @@ inline void soap_delete_OBD__GetSpeed(struct soap *soap, struct OBD__GetSpeed *p
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy_OBD__GetSpeed(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE_OBD__GetSpeedResponse
-#define SOAP_TYPE_OBD__GetSpeedResponse (9)
+#define SOAP_TYPE_OBD__GetSpeedResponse (10)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_OBD__GetSpeedResponse(struct soap*, struct OBD__GetSpeedResponse *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_OBD__GetSpeedResponse(struct soap*, const struct OBD__GetSpeedResponse *);
@@ -329,7 +390,7 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_OBD__GetSpeedResponse(struct soap*, int, in
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_PointerToSOAP_ENV__Reason
-#define SOAP_TYPE_PointerToSOAP_ENV__Reason (20)
+#define SOAP_TYPE_PointerToSOAP_ENV__Reason (24)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerToSOAP_ENV__Reason(struct soap*, struct SOAP_ENV__Reason *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerToSOAP_ENV__Reason(struct soap*, const char *, int, struct SOAP_ENV__Reason *const*, const char *);
@@ -352,7 +413,7 @@ SOAP_FMAC3 struct SOAP_ENV__Reason ** SOAP_FMAC4 soap_get_PointerToSOAP_ENV__Rea
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_PointerToSOAP_ENV__Detail
-#define SOAP_TYPE_PointerToSOAP_ENV__Detail (19)
+#define SOAP_TYPE_PointerToSOAP_ENV__Detail (23)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerToSOAP_ENV__Detail(struct soap*, struct SOAP_ENV__Detail *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerToSOAP_ENV__Detail(struct soap*, const char *, int, struct SOAP_ENV__Detail *const*, const char *);
@@ -375,7 +436,7 @@ SOAP_FMAC3 struct SOAP_ENV__Detail ** SOAP_FMAC4 soap_get_PointerToSOAP_ENV__Det
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_PointerToSOAP_ENV__Code
-#define SOAP_TYPE_PointerToSOAP_ENV__Code (13)
+#define SOAP_TYPE_PointerToSOAP_ENV__Code (17)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerToSOAP_ENV__Code(struct soap*, struct SOAP_ENV__Code *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerToSOAP_ENV__Code(struct soap*, const char *, int, struct SOAP_ENV__Code *const*, const char *);

@@ -59,6 +59,18 @@ int OBD__GetSpeed(struct soap* soap, int& speed)
 	speed = i;
 	i += 10;
 	if (i > 200) i = 0;
-	cout << "Speed served" << endl;
+	cout << "Speed served: " << speed << endl;
+	return SOAP_OK;
+}
+
+int OBD__GetReadings(struct soap* soap, OBD__Readings& readings)
+{
+	static int j = 0;
+	readings.speed = j;
+	readings.revolution = j*25;
+	readings.voltage = 12;
+	j += 10;
+	if (j > 200) j = 0;
+	cout << "Readings served: " << readings.speed << " " << readings.revolution << " " << readings.voltage << endl;
 	return SOAP_OK;
 }

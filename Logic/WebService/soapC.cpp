@@ -15,7 +15,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 
 #include "soapH.h"
 
-SOAP_SOURCE_STAMP("@(#) soapC.cpp ver 2.8.17r 2014-07-10 16:46:40 GMT")
+SOAP_SOURCE_STAMP("@(#) soapC.cpp ver 2.8.17r 2014-07-15 20:42:40 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -192,6 +192,10 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		return soap_in_byte(soap, NULL, NULL, "xsd:byte");
 	case SOAP_TYPE_int:
 		return soap_in_int(soap, NULL, NULL, "xsd:int");
+	case SOAP_TYPE_OBD__Readings:
+		return soap_in_OBD__Readings(soap, NULL, NULL, "OBD:Readings");
+	case SOAP_TYPE_OBD__GetReadings:
+		return soap_in_OBD__GetReadings(soap, NULL, NULL, "OBD:GetReadings");
 	case SOAP_TYPE_OBD__GetSpeed:
 		return soap_in_OBD__GetSpeed(soap, NULL, NULL, "OBD:GetSpeed");
 	case SOAP_TYPE_OBD__GetSpeedResponse:
@@ -213,6 +217,10 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 	{	const char *t = soap->type;
 		if (!*t)
 			t = soap->tag;
+		if (!soap_match_tag(soap, t, "OBD:Readings"))
+		{	*type = SOAP_TYPE_OBD__Readings;
+			return soap_in_OBD__Readings(soap, NULL, NULL, NULL);
+		}
 		if (!soap_match_tag(soap, t, "xsd:byte"))
 		{	*type = SOAP_TYPE_byte;
 			return soap_in_byte(soap, NULL, NULL, NULL);
@@ -220,6 +228,10 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		if (!soap_match_tag(soap, t, "xsd:int"))
 		{	*type = SOAP_TYPE_int;
 			return soap_in_int(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "OBD:GetReadings"))
+		{	*type = SOAP_TYPE_OBD__GetReadings;
+			return soap_in_OBD__GetReadings(soap, NULL, NULL, NULL);
 		}
 		if (!soap_match_tag(soap, t, "OBD:GetSpeed"))
 		{	*type = SOAP_TYPE_OBD__GetSpeed;
@@ -310,6 +322,10 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return soap_out_byte(soap, tag, id, (const char *)ptr, "xsd:byte");
 	case SOAP_TYPE_int:
 		return soap_out_int(soap, tag, id, (const int *)ptr, "xsd:int");
+	case SOAP_TYPE_OBD__Readings:
+		return ((OBD__Readings *)ptr)->soap_out(soap, tag, id, "OBD:Readings");
+	case SOAP_TYPE_OBD__GetReadings:
+		return soap_out_OBD__GetReadings(soap, tag, id, (const struct OBD__GetReadings *)ptr, "OBD:GetReadings");
 	case SOAP_TYPE_OBD__GetSpeed:
 		return soap_out_OBD__GetSpeed(soap, tag, id, (const struct OBD__GetSpeed *)ptr, "OBD:GetSpeed");
 	case SOAP_TYPE_OBD__GetSpeedResponse:
@@ -336,6 +352,12 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	(void)soap; (void)ptr; (void)type; /* appease -Wall -Werror */
 	switch (type)
 	{
+	case SOAP_TYPE_OBD__Readings:
+		((OBD__Readings *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE_OBD__GetReadings:
+		soap_serialize_OBD__GetReadings(soap, (const struct OBD__GetReadings *)ptr);
+		break;
 	case SOAP_TYPE_OBD__GetSpeed:
 		soap_serialize_OBD__GetSpeed(soap, (const struct OBD__GetSpeed *)ptr);
 		break;
@@ -360,10 +382,14 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_instantiate(struct soap *soap, int t, const ch
 {	(void)type;
 	switch (t)
 	{
+	case SOAP_TYPE_OBD__Readings:
+		return (void*)soap_instantiate_OBD__Readings(soap, -1, type, arrayType, n);
 	case SOAP_TYPE_OBD__GetSpeedResponse:
 		return (void*)soap_instantiate_OBD__GetSpeedResponse(soap, -1, type, arrayType, n);
 	case SOAP_TYPE_OBD__GetSpeed:
 		return (void*)soap_instantiate_OBD__GetSpeed(soap, -1, type, arrayType, n);
+	case SOAP_TYPE_OBD__GetReadings:
+		return (void*)soap_instantiate_OBD__GetReadings(soap, -1, type, arrayType, n);
 #ifndef WITH_NOGLOBAL
 	case SOAP_TYPE_SOAP_ENV__Header:
 		return (void*)soap_instantiate_SOAP_ENV__Header(soap, -1, type, arrayType, n);
@@ -391,6 +417,12 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_instantiate(struct soap *soap, int t, const ch
 SOAP_FMAC3 int SOAP_FMAC4 soap_fdelete(struct soap_clist *p)
 {	switch (p->type)
 	{
+	case SOAP_TYPE_OBD__Readings:
+		if (p->size < 0)
+			SOAP_DELETE((OBD__Readings*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((OBD__Readings*)p->ptr);
+		break;
 	case SOAP_TYPE_OBD__GetSpeedResponse:
 		if (p->size < 0)
 			SOAP_DELETE((struct OBD__GetSpeedResponse*)p->ptr);
@@ -402,6 +434,12 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_fdelete(struct soap_clist *p)
 			SOAP_DELETE((struct OBD__GetSpeed*)p->ptr);
 		else
 			SOAP_DELETE_ARRAY((struct OBD__GetSpeed*)p->ptr);
+		break;
+	case SOAP_TYPE_OBD__GetReadings:
+		if (p->size < 0)
+			SOAP_DELETE((struct OBD__GetReadings*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((struct OBD__GetReadings*)p->ptr);
 		break;
 #ifndef WITH_NOGLOBAL
 	case SOAP_TYPE_SOAP_ENV__Header:
@@ -524,6 +562,154 @@ SOAP_FMAC3 int * SOAP_FMAC4 soap_get_int(struct soap *soap, int *p, const char *
 		if (soap_getindependent(soap))
 			return NULL;
 	return p;
+}
+
+void OBD__Readings::soap_default(struct soap *soap)
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_default_int(soap, &this->OBD__Readings::speed);
+	soap_default_int(soap, &this->OBD__Readings::revolution);
+	soap_default_int(soap, &this->OBD__Readings::voltage);
+}
+
+void OBD__Readings::soap_serialize(struct soap *soap) const
+{
+#ifndef WITH_NOIDREF
+	(void)soap; /* appease -Wall -Werror */
+#endif
+}
+
+int OBD__Readings::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out_OBD__Readings(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_OBD__Readings(struct soap *soap, const char *tag, int id, const OBD__Readings *a, const char *type)
+{
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_OBD__Readings), type))
+		return soap->error;
+	if (soap_out_int(soap, "speed", -1, &(a->OBD__Readings::speed), ""))
+		return soap->error;
+	if (soap_out_int(soap, "revolution", -1, &(a->OBD__Readings::revolution), ""))
+		return soap->error;
+	if (soap_out_int(soap, "voltage", -1, &(a->OBD__Readings::voltage), ""))
+		return soap->error;
+	return soap_element_end_out(soap, tag);
+}
+
+void *OBD__Readings::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in_OBD__Readings(soap, tag, this, type);
+}
+
+SOAP_FMAC3 OBD__Readings * SOAP_FMAC4 soap_in_OBD__Readings(struct soap *soap, const char *tag, OBD__Readings *a, const char *type)
+{
+	(void)type; /* appease -Wall -Werror */
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (OBD__Readings *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE_OBD__Readings, sizeof(OBD__Readings), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE_OBD__Readings)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (OBD__Readings *)a->soap_in(soap, tag, type);
+		}
+	}
+	size_t soap_flag_speed1 = 1;
+	size_t soap_flag_revolution1 = 1;
+	size_t soap_flag_voltage1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_speed1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "speed", &(a->OBD__Readings::speed), "xsd:int"))
+				{	soap_flag_speed1--;
+					continue;
+				}
+			if (soap_flag_revolution1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "revolution", &(a->OBD__Readings::revolution), "xsd:int"))
+				{	soap_flag_revolution1--;
+					continue;
+				}
+			if (soap_flag_voltage1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "voltage", &(a->OBD__Readings::voltage), "xsd:int"))
+				{	soap_flag_voltage1--;
+					continue;
+				}
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (OBD__Readings *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_OBD__Readings, 0, sizeof(OBD__Readings), 0, soap_copy_OBD__Readings);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_speed1 > 0 || soap_flag_revolution1 > 0 || soap_flag_voltage1 > 0))
+	{	soap->error = SOAP_OCCURS;
+		return NULL;
+	}
+	return a;
+}
+
+int OBD__Readings::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE_OBD__Readings);
+	if (this->soap_out(soap, tag?tag:"OBD:Readings", id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+void *OBD__Readings::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get_OBD__Readings(soap, this, tag, type);
+}
+
+SOAP_FMAC3 OBD__Readings * SOAP_FMAC4 soap_get_OBD__Readings(struct soap *soap, OBD__Readings *p, const char *tag, const char *type)
+{
+	if ((p = soap_in_OBD__Readings(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 OBD__Readings * SOAP_FMAC2 soap_instantiate_OBD__Readings(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_OBD__Readings(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_OBD__Readings, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(OBD__Readings);
+		if (size)
+			*size = sizeof(OBD__Readings);
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW_ARRAY(OBD__Readings, n);
+		if (size)
+			*size = n * sizeof(OBD__Readings);
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	if (!cp->ptr)
+		soap->error = SOAP_EOM;
+	return (OBD__Readings*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_OBD__Readings(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying OBD__Readings %p -> %p\n", q, p));
+	*(OBD__Readings*)p = *(OBD__Readings*)q;
 }
 
 #ifndef WITH_NOGLOBAL
@@ -1168,6 +1354,102 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Header(struct soap *soap, int st,
 }
 
 #endif
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_OBD__GetReadings(struct soap *soap, struct OBD__GetReadings *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_OBD__GetReadings(struct soap *soap, const struct OBD__GetReadings *a)
+{
+#ifndef WITH_NOIDREF
+	(void)soap; (void)a; /* appease -Wall -Werror */
+#endif
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_OBD__GetReadings(struct soap *soap, const char *tag, int id, const struct OBD__GetReadings *a, const char *type)
+{
+	(void)soap; (void)tag; (void)id; (void)type;
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_OBD__GetReadings), type))
+		return soap->error;
+	return soap_element_end_out(soap, tag);
+}
+
+SOAP_FMAC3 struct OBD__GetReadings * SOAP_FMAC4 soap_in_OBD__GetReadings(struct soap *soap, const char *tag, struct OBD__GetReadings *a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 0, type))
+		return NULL;
+	a = (struct OBD__GetReadings *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_OBD__GetReadings, sizeof(struct OBD__GetReadings), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	soap_default_OBD__GetReadings(soap, a);
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (struct OBD__GetReadings *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_OBD__GetReadings, 0, sizeof(struct OBD__GetReadings), 0, NULL);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_OBD__GetReadings(struct soap *soap, const struct OBD__GetReadings *a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_OBD__GetReadings);
+	if (soap_out_OBD__GetReadings(soap, tag?tag:"OBD:GetReadings", id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 struct OBD__GetReadings * SOAP_FMAC4 soap_get_OBD__GetReadings(struct soap *soap, struct OBD__GetReadings *p, const char *tag, const char *type)
+{
+	if ((p = soap_in_OBD__GetReadings(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 struct OBD__GetReadings * SOAP_FMAC2 soap_instantiate_OBD__GetReadings(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_OBD__GetReadings(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_OBD__GetReadings, n, soap_fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(struct OBD__GetReadings);
+		if (size)
+			*size = sizeof(struct OBD__GetReadings);
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW_ARRAY(struct OBD__GetReadings, n);
+		if (size)
+			*size = n * sizeof(struct OBD__GetReadings);
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	if (!cp->ptr)
+		soap->error = SOAP_EOM;
+	return (struct OBD__GetReadings*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_OBD__GetReadings(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct OBD__GetReadings %p -> %p\n", q, p));
+	*(struct OBD__GetReadings*)p = *(struct OBD__GetReadings*)q;
+}
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_OBD__GetSpeed(struct soap *soap, struct OBD__GetSpeed *a)
 {

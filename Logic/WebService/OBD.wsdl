@@ -41,6 +41,23 @@
     </sequence>
    </complexType>
   </element>
+  <!-- operation request element -->
+  <element name="GetReadings">
+   <complexType>
+    <sequence>
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation response element -->
+  <element name="Readings">
+   <complexType>
+    <sequence>
+     <element name="speed" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- OBD__Readings::speed -->
+     <element name="revolution" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- OBD__Readings::revolution -->
+     <element name="voltage" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- OBD__Readings::voltage -->
+    </sequence>
+   </complexType>
+  </element>
  </schema>
 
 </types>
@@ -53,17 +70,39 @@
  <part name="Body" element="OBD:GetSpeedResponse"/>
 </message>
 
+<message name="GetReadings">
+ <part name="Body" element="OBD:GetReadings"/><!-- OBD__GetReadings::OBD__GetReadings -->
+</message>
+
+<message name="Readings">
+ <part name="Body" element="OBD:Readings"/><!-- OBD__GetReadings::readings -->
+</message>
+
 <portType name="ServicePortType">
  <operation name="GetSpeed">
   <documentation>Service definition of function OBD__GetSpeed</documentation>
   <input message="tns:GetSpeedRequest"/>
   <output message="tns:GetSpeedResponse"/>
  </operation>
+ <operation name="GetReadings">
+  <documentation>Service definition of function OBD__GetReadings</documentation>
+  <input message="tns:GetReadings"/>
+  <output message="tns:Readings"/>
+ </operation>
 </portType>
 
 <binding name="Service" type="tns:ServicePortType">
  <SOAP:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
  <operation name="GetSpeed">
+  <SOAP:operation soapAction=""/>
+  <input>
+     <SOAP:body parts="Body" use="literal"/>
+  </input>
+  <output>
+     <SOAP:body parts="Body" use="literal"/>
+  </output>
+ </operation>
+ <operation name="GetReadings">
   <SOAP:operation soapAction=""/>
   <input>
      <SOAP:body parts="Body" use="literal"/>

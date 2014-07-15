@@ -14,7 +14,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 #endif
 #include "soapH.h"
 
-SOAP_SOURCE_STAMP("@(#) soapClient.cpp ver 2.8.17r 2014-07-10 16:46:39 GMT")
+SOAP_SOURCE_STAMP("@(#) soapClient.cpp ver 2.8.17r 2014-07-15 20:42:40 GMT")
 
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_call_OBD__GetSpeed(struct soap *soap, const char *soap_endpoint, const char *soap_action, int &speed)
@@ -62,6 +62,52 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_OBD__GetSpeed(struct soap *soap, const char 
 	 || soap_end_recv(soap))
 		return soap_closesock(soap);
 	speed = soap_tmp_OBD__GetSpeedResponse->speed;
+	return soap_closesock(soap);
+}
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_OBD__GetReadings(struct soap *soap, const char *soap_endpoint, const char *soap_action, OBD__Readings &readings)
+{	struct OBD__GetReadings soap_tmp_OBD__GetReadings;
+	soap_begin(soap);
+	soap->encodingStyle = NULL;
+	soap_serializeheader(soap);
+	soap_serialize_OBD__GetReadings(soap, &soap_tmp_OBD__GetReadings);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put_OBD__GetReadings(soap, &soap_tmp_OBD__GetReadings, "OBD:GetReadings", NULL)
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	}
+	if (soap_end_count(soap))
+		return soap->error;
+	if (soap_connect(soap, soap_url(soap, soap_endpoint, NULL), soap_action)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put_OBD__GetReadings(soap, &soap_tmp_OBD__GetReadings, "OBD:GetReadings", NULL)
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap_closesock(soap);
+	if (!&readings)
+		return soap_closesock(soap);
+	readings.soap_default(soap);
+	if (soap_begin_recv(soap)
+	 || soap_envelope_begin_in(soap)
+	 || soap_recv_header(soap)
+	 || soap_body_begin_in(soap))
+		return soap_closesock(soap);
+	readings.soap_get(soap, "OBD:Readings", "");
+	if (soap->error)
+		return soap_recv_fault(soap, 0);
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap_closesock(soap);
 	return soap_closesock(soap);
 }
 

@@ -24,5 +24,22 @@
     </sequence>
    </complexType>
   </element>
+  <!-- operation request element -->
+  <element name="GetReadings">
+   <complexType>
+    <sequence>
+    </sequence>
+   </complexType>
+  </element>
+  <!-- operation response element -->
+  <element name="Readings">
+   <complexType>
+    <sequence>
+     <element name="speed" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- OBD__Readings::speed -->
+     <element name="revolution" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- OBD__Readings::revolution -->
+     <element name="voltage" type="xsd:int" minOccurs="1" maxOccurs="1"/><!-- OBD__Readings::voltage -->
+    </sequence>
+   </complexType>
+  </element>
  </schema>
 
