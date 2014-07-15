@@ -19,7 +19,7 @@ function GetOBDReadings() {
 	</SOAP-ENV:Envelope>';
     
 	$.ajax({
-        url: "http://192.168.0.4:2014/",
+        url: "http://192.168.1.3:2014/",
         type: "POST",
 		data: soapRequest,
         success: HandleReceivedReadings,
@@ -57,15 +57,27 @@ function RandomData() {
 }
 
 function HandleReceivedReadings(data, status, req) {
+    var speed = $(req.responseXML).find("speed");
+    var revolution = $(req.responseXML).find("speed");
+    //var revolution = $(req.responseXML).find("revolution");
+
 	var element = document.getElementById("speed-value");
-    element.innerHTML = rand;
+    element.innerHTML = speed[0].innerHTML;
     var point = Highcharts.charts[0].series[0].points[0];
-    point.update(rand);
+    point.update(parseInt(speed[0].innerHTML));
     point = Highcharts.charts[0].series[0].points[1];
-    point.update(200);
+    point.update(200 - parseInt(speed[0].innerHTML));
     var shift = Highcharts.charts[1].series[0].data.length > 20;
-    Highcharts.charts[1].series[0].addPoint(rand, true, shift);
-    $("#response").text($(req.responseXML).find(speed).text());
+    Highcharts.charts[1].series[0].addPoint(parseInt(speed[0].innerHTML), true, shift);
+
+    element = document.getElementById("revolution-value");
+    element.innerHTML = revolution[0].innerHTML;
+    point = Highcharts.charts[2].series[0].points[0];
+    point.update(parseInt(revolution[0].innerHTML)*10);
+    point = Highcharts.charts[2].series[0].points[1];
+    point.update(5000 - revolution[0].innerHTML*10);
+    shift = Highcharts.charts[3].series[0].data.length > 20;
+    Highcharts.charts[3].series[0].addPoint(revolution[0].innerHTML*10, true, shift);
 }
 
 function LoadHighcharts() {
