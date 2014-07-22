@@ -11,6 +11,7 @@
 #include "../SerialPort/SerialPort.h"
 #include "ATCommands.h"
 #include "ObdCommands.h"
+#include <sstream>
 #include <vector>
 
 using namespace std;

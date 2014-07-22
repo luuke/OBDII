@@ -19,8 +19,8 @@ float ObdScanner::Voltage = 0;
 ObdScanner::ObdScanner()
 {
 	_isReady = false;
-	_isResponseForLastCommand = false;
-	_lastCommandType = AT;
+	_isCorrectReponse = false;
+	_commandType = AT;
 	_serialPort.Open();
 	_serialPort.Configure();
 }
@@ -45,25 +45,26 @@ void ObdScanner::ReadVehicleParameters()
 void ObdScanner::ReadVehicleSpeed()
 {
 	//ObdScanner::Speed = 120;
-	GetObdData(SHOW_CURRENT_DATA + VEHICLE_SPEED);
+	string cmd;
+	cmd.append(SHOW_CURRENT_DATA);
+	cmd.append(ENGINE_RPM);
+	GetObdData(cmd);
 	ObdScanner::Speed = _responseData;
 }
 
 void ObdScanner::ReadVehicleRevolution()
 {
 	//ObdScanner::Revolution = 2400;
-	GetObdData(SHOW_CURRENT_DATA + ENGINE_RPM);
+	string cmd;
+	cmd.append(SHOW_CURRENT_DATA);
+	cmd.append(ENGINE_RPM);
+	GetObdData(cmd);
 	ObdScanner::Revolution = _responseData / 4;
 }
 
 void ObdScanner::ReadVehicleVoltage()
 {
 	ObdScanner::Voltage = 14.5;
-}
-
-void ObdScanner::PrintDeviceId()
-{
-	GetData(PRINT_ID);
 }
 
 void ObdScanner::GetObdData(string command)
@@ -80,11 +81,11 @@ void ObdScanner::ParseObdResponse()
 	if (IsCorrectObdResponse())
 	{
 		string data = _response.substr(0,4);
-		unsigned int decValue;
 		stringstream ss;
-		ss << std::hex << data;
+		ss << hex << data;
 		ss >> _responseData;
 	}
+	_isReady = _response.find('>') != string::npos ? true : false;
 }
 
 bool ObdScanner::IsCorrectObdResponse()
@@ -96,29 +97,10 @@ bool ObdScanner::IsCorrectObdResponse()
 	return _isCorrectReponse;
 }
 
-void ObdScanner::GetData(string command)
-{
-	SendATCommand(command);
-	ReadResponse();
-	ParseResponse();
-}
-
 void ObdScanner::SendCommand(string command)
 {
-	_lastCommand = command;
+	_command = command;
 	_serialPort.Write(command + '\r');
-}
-
-void ObdScanner::SendATCommand(string command)
-{
-	_lastCommandType = AT;
-	SendCommand(command);
-}
-
-void ObdScanner::SendOBDCommand(string command)
-{
-	_lastCommandType = OBD;
-	SendCommand(command);
 }
 
 void ObdScanner::ReadResponse()
@@ -126,11 +108,11 @@ void ObdScanner::ReadResponse()
 	bool continueReading = true;
 	string singleMessage;
 
-	_commandResponse.clear();
+	_response.clear();
 	while(continueReading)
 	{
 		singleMessage = _serialPort.Read();
-		_commandResponse += singleMessage;
+		_response += singleMessage;
 		cout << singleMessage << endl;
 		if(singleMessage.find_first_of('>') != string::npos)
 		{
@@ -139,53 +121,20 @@ void ObdScanner::ReadResponse()
 		}
 	}
 
-	cout << "Command response: " << _commandResponse << endl;
-}
-
-void ObdScanner::ParseResponse()
-{
-	_isResponseForLastCommand = _commandResponse.find(_lastCommand) != string::npos ? true : false;
-//	if(_commandResponse.find('?') != string::npos)
-//	{
-//		throw ("OBD scanner returned > ? <");
-//	}
-
-	if(_isResponseForLastCommand)
-	{
-		switch(_lastCommandType)
-		{
-		case AT:
-			ParseATCommandResponse();
-			break;
-		case OBD:
-			ParseOBDCommandResponse();
-			break;
-		default:
-			throw ("Case not implemented");
-		}
-	}
-	_isReady = _commandResponse.find('>') != string::npos ? true : false;
+	cout << "Command response: " << _response << endl;
 }
 
 void ObdScanner::ParseATCommandResponse()
 {
 	string tmp;
 
-	tmp = _commandResponse.substr((_commandResponse.find('\n')+1),string::npos);
+	tmp = _response.substr((_response.find('\n')+1),string::npos);
 	tmp = tmp.substr(0, tmp.find('\r'));
 
-	_responseData = tmp;
+	//_responseData = tmp;
 
 	cout << "Data: " << _responseData << endl;
 }
 
-void ObdScanner::ParseOBDCommandResponse()
-{
-	string expectedResponseForLastCommand = _lastCommand;
-	expectedResponseForLastCommand[0] = '4';
-
-	throw ("Not implemented");
-}
 
 #endif /* OBDSCANNER_CPP_ */
-s
