@@ -22,6 +22,7 @@
 
 //Parameters identifications
 
-
+#define ENGINE_RPM							"OC"
+#define VEHICLE_SPEED						"0D"
 
 #endif /* OBDCOMMANDS_H_ */
