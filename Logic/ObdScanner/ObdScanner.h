@@ -12,6 +12,7 @@
 #include "ATCommands.h"
 #include "ObdCommands.h"
 #include <sstream>
+#include <algorithm>
 #include <vector>
 
 using namespace std;

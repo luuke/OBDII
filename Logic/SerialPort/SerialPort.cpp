@@ -110,7 +110,7 @@ void SerialPort::ReadChar()
 	int n;
 
 	n = read(_fileDescriptor, &_receivedChar, 1);
-	cout << (int)_receivedChar << endl;
+	//cout << (int)_receivedChar << endl;
 	if(n == 0)
 	{
 		_receivedChar = NULL;

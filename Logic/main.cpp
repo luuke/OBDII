@@ -22,7 +22,7 @@ int main()
 	ObdScanner obdScanner;
 	int master, slave;
 	struct soap *soap = soap_new();
-	master = soap_bind(soap, "192.168.1.3", 2014, 100);
+	master = soap_bind(soap, "192.168.0.4", 2014, 100);
 	if(master < 0)
 	{
 		soap_print_fault(soap, stderr);
@@ -33,6 +33,9 @@ int main()
 	for(;;)
 	{
 		obdScanner.ReadVehicleParameters();
+		cout << "main" << endl;
+			cout << ObdScanner::Speed << endl;
+			cout << ObdScanner::Revolution << endl;
 		slave = soap_accept(soap);
 		fprintf(stderr, "Socket connection successful: slave socket = %d\n", slave);
 		cout << "Count: " << count++ << endl;
@@ -64,6 +67,9 @@ int OBD__GetSpeed(struct soap* soap, int& speed)
 int OBD__GetReadings(struct soap* soap, OBD__Readings& readings)
 {
 	static int i = 0;
+	cout << "GetReadings" << endl;
+		cout << ObdScanner::Speed << endl;
+		cout << ObdScanner::Revolution << endl;
 	readings.speed = ObdScanner::Speed;
 	readings.revolution = ObdScanner::Revolution;
 	readings.voltage = ObdScanner::Voltage;
